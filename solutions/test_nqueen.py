@@ -8,6 +8,7 @@ def generate_board(size):
 
 
 class TestUtils:
+    @staticmethod
     def get_wrong_board_full(self):
         board = [[1, 0, 0, 0],
                  [0, 1, 0, 0],
@@ -15,6 +16,7 @@ class TestUtils:
                  [0, 0, 1, 0]]
         return board
 
+    @staticmethod
     def get_board_soluce(self):
         board = [[0, 0, 1, 0],
                  [1, 0, 0, 0],
@@ -22,7 +24,8 @@ class TestUtils:
                  [0, 1, 0, 0]]
         return board
 
-    def get_good_board_not_full(self):
+    @staticmethod
+    def get_good_board_not_full():
         board = [[0, 0, 0, 0],
                  [1, 0, 0, 0],
                  [0, 0, 0, 1],
@@ -41,7 +44,7 @@ class TestUtils:
         board = generate_board(4)
         assert can_t_attack(4, board)
 
-    def test_can_t_attach_soluce(self):
+    def test_can_t_attack_soluce(self):
         board = self.get_board_soluce()
         assert can_t_attack(4, board)
 
