@@ -68,52 +68,52 @@ def solve_n_queen_small(size, board):
 # Algo 2 :  le meilleur
 
 def solve_n_queen_big(size, board):
-    array = [0] * size
-    k = 0
-    if size % 6 == 2:
-        for i in range(2, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+    stockQueen = [0] * size     # Tableau de stock d'information de placements de reines de la taille du tableau
+    nbQueen = 0     # Nombre de reines posées
 
-        array[k] = 3 - 1
-        k += 1
-        array[k] = 1 - 1
-        k += 1
+    if size % 6 == 2:   # Premier cas particulier
+        for i in range(2, size + 1, 2):     # Première diagonale
+            stockQueen[nbQueen] = i - 1  # Placement de la reine dans le stock
+            nbQueen += 1  # Incrémentation du nombre de reines
 
-        for i in range(7, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+        stockQueen[nbQueen] = 3 - 1     # Placement manuel
+        nbQueen += 1
+        stockQueen[nbQueen] = 1 - 1
+        nbQueen
+        for i in range(7, size + 1, 2):     # Deuxième diagonale
+            stockQueen[nbQueen] = i - 1
+            nbQueen += 1
 
-        array[k] = 5 - 1
+        stockQueen[nbQueen] = 5 - 1
 
-    elif size % 6 == 3:
-        array[k] = 4 - 1
-        k += 1
-        for i in range(6, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+    elif size % 6 == 3:     # Deuxième cas particulier
+        stockQueen[nbQueen] = 4 - 1
+        nbQueen += 1
+        for i in range(6, size + 1, 2):     # Première diagonale
+            stockQueen[nbQueen] = i - 1
+            nbQueen += 1
 
-        array[k] = 2 - 1
-        k += 1
-        for i in range(5, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+        stockQueen[nbQueen] = 2 - 1     # Placement manuel
+        nbQueen += 1
+        for i in range(5, size + 1, 2):     # Deuxième diagonale
+            stockQueen[nbQueen] = i - 1
+            nbQueen += 1
 
-        array[k] = 1 - 1
-        k += 1
-        array[k] = 3 - 1
+        stockQueen[nbQueen] = 1 - 1     # Placement manuel
+        nbQueen += 1
+        stockQueen[nbQueen] = 3 - 1
 
-    else:
-        for i in range(2, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+    else:   # Cas général
+        for i in range(2, size + 1, 2):     # Première diagonale
+            stockQueen[nbQueen] = i - 1
+            nbQueen += 1
 
-        for i in range(1, size + 1, 2):
-            array[k] = i - 1
-            k += 1
+        for i in range(1, size + 1, 2):     # Deuxième diagonale
+            stockQueen[nbQueen] = i - 1
+            nbQueen += 1
 
-    for i in range(size):
-        board[array[i]][i] = 1
+    for i in range(size):   # Placement des reines dans le board à l'aide du stockQueen
+        board[stockQueen[i]][i] = 1
 
     return board, True
 
