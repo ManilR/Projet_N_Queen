@@ -1,6 +1,9 @@
 import pytest
 import time
-from nqueen_solving import *
+from nqueen_solving import (
+    is_soluce, print_board, solve_n_queen_small,
+    solve_n_queen_big, solve_n_queen_all_soluce, can_t_attack
+)
 
 
 def generate_board(size):
@@ -8,7 +11,6 @@ def generate_board(size):
 
 
 class TestUtils:
-    @staticmethod
     def get_wrong_board_full(self):
         board = [[1, 0, 0, 0],
                  [0, 1, 0, 0],
@@ -16,7 +18,6 @@ class TestUtils:
                  [0, 0, 1, 0]]
         return board
 
-    @staticmethod
     def get_board_soluce(self):
         board = [[0, 0, 1, 0],
                  [1, 0, 0, 0],
@@ -24,8 +25,7 @@ class TestUtils:
                  [0, 1, 0, 0]]
         return board
 
-    @staticmethod
-    def get_good_board_not_full():
+    def get_good_board_not_full(self):
         board = [[0, 0, 0, 0],
                  [1, 0, 0, 0],
                  [0, 0, 0, 1],
@@ -44,7 +44,7 @@ class TestUtils:
         board = generate_board(4)
         assert can_t_attack(4, board)
 
-    def test_can_t_attack_soluce(self):
+    def test_can_t_attach_soluce(self):
         board = self.get_board_soluce()
         assert can_t_attack(4, board)
 
@@ -81,7 +81,14 @@ class TestUtils:
         assert nb_queen == 4
 
 
-class TestSmall:
+class TestBoard:
+    def check_validity(self, board, board_size):
+        is_a_soluce, nb_queen = is_soluce(board_size, board)
+        assert is_a_soluce
+        assert nb_queen == board_size
+
+
+class TestSmall(TestBoard):
     def test_solve_three_x_three(self):
         board_size = 3
         board = generate_board(board_size)
@@ -94,9 +101,7 @@ class TestSmall:
         board, solved = solve_n_queen_small(board_size, board)
         assert solved
 
-        is_a_soluce, nb_queen = is_soluce(board_size, board)
-        assert is_a_soluce
-        assert nb_queen == board_size
+        self.check_validity(board, board_size)
 
     @pytest.mark.parametrize("board_size", [5, 6, 7, 8, 9, 10])
     def test_solve_N_x_N(self, board_size):
@@ -105,12 +110,11 @@ class TestSmall:
         board, solved = solve_n_queen_small(board_size, board)
         assert solved
 
-        is_a_soluce, nb_queen = is_soluce(board_size, board)
-        assert is_a_soluce
-        assert nb_queen == board_size
+        self.check_validity(board, board_size)
 
 
-class TestMedium:
+class TestMedium(TestBoard):
+    @pytest.mark.slow
     @pytest.mark.parametrize("board_size", [15, 20])
     def test_solve_N_x_N_with_small_func(self, board_size):
         board = generate_board(board_size)
@@ -120,11 +124,9 @@ class TestMedium:
         assert solved
         t2 = time.time()
         print(f"\nTest of size {board_size} took {t2-t1} seconds to be solved")
+        assert t2 - t1 < 200
 
-        is_a_soluce, nb_queen = is_soluce(board_size, board)
-        assert is_a_soluce
-        assert nb_queen == board_size
-
+        self.check_validity(board, board_size)
 
     @pytest.mark.parametrize("board_size", [20, 30, 50])
     def test_solve_N_x_N(self, board_size):
@@ -135,9 +137,13 @@ class TestMedium:
         assert solved
         t2 = time.time()
         print(f"\nTest of size {board_size} took {t2-t1} seconds to be solved")
+        print_board(board_size, board)
+        assert t2 - t1 < 200
+
+        self.check_validity(board, board_size)
 
 
-class TestBig:
+class TestBig(TestBoard):
     @pytest.mark.parametrize("board_size", [50, 100])
     def test_solve_N_x_N(self, board_size):
         board = generate_board(board_size)
@@ -147,16 +153,26 @@ class TestBig:
         assert solved
         t2 = time.time()
         print(f"\nTest of size {board_size} took {t2-t1} seconds to be solved")
+        assert t2 - t1 < 200
+
+        self.check_validity(board, board_size)
+
+    @pytest.mark.slow
+    @pytest.mark.parametrize("board_size", [200, 500, 1000])
+    def test_solve_super_big(self, board_size):
+        self.test_solve_N_x_N(board_size)
 
 
-class TestAllSoluce:
-    @pytest.mark.parametrize("board_size, nb_soluce", [(4,2), (5,10), (6,4), (7,40), (8,92)])
+class TestAllSoluce(TestBoard):
+    @pytest.mark.parametrize("board_size, nb_soluce",
+                             [(4, 2), (5, 10), (6, 4), (7, 40), (8, 92)])
     def test_solve_N_x_N(self, board_size, nb_soluce):
         board = generate_board(board_size)
+        t1 = time.time()
         boards = solve_n_queen_all_soluce(board_size, board)
+        t2 = time.time()
+        print(f"\nFound All soluce of size {board_size} in {t2 - t1} seconds")
         assert len(boards) == nb_soluce
 
         for soluce in boards:
-            is_a_soluce, nb_queen = is_soluce(board_size, soluce)
-            assert is_a_soluce
-            assert nb_queen == board_size
+            self.check_validity(soluce, board_size)

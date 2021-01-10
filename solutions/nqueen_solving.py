@@ -3,13 +3,26 @@ import time
 
 
 # Fonctions Utilitaires
+def no_conflict(current, board):
+    for i in range(current):
+        if board[i] == board[current]:
+            return False
+        if current - i == abs(board[current] - board[i]):
+            return False
+    return True
+
 
 def can_t_attack(size, board):
-    for x in range(size):
-        for y in range(size):
-            if board[x][y] == 1 and not pos_can_t_attack(size, board, x, y):
-                return False
-    return True
+    tab = [-1] * size
+    nbQueen = 0
+    for i in range(size):
+        for j in range(size):
+            if board[i][j] == 1:
+                tab[i] = j
+                nbQueen += 1
+    if nbQueen == 0:
+        return True
+    return no_conflict(size - 1, tab)
 
 
 def pos_can_t_attack(size, board, x, y):
